@@ -1,6 +1,9 @@
 ﻿Imports System.ComponentModel
 
 Public Class Form1
+    'ReportProgress 会花费大量时间
+
+
     Dim BGWDemo As BackgroundWorker
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
@@ -35,14 +38,18 @@ Public Class Form1
         '不要在这里操作前台控件，因为代码运行在另一个线程了
         Dim BGWIns As BackgroundWorker = CType(sender, BackgroundWorker)
         Dim Count As Integer = 0
-        For Index As Integer = 0 To 100
-            Count += 1
+        For Index As Integer = 0 To 1000
+            '使用 ReportProgress 更新进度会大量花费时间，所以每执行10次任务回报一次进度
+            For IndexInside As Integer = 0 To 10
+                Count += 1
+            Next
+
             '在这里触发进度更新事件（userState可以帮助传出任意类型的数据）
             BGWIns.ReportProgress(Index, "任务完成了 " & Index & "%")
             '使用用户传入的参数当做等待超时
             Threading.Thread.Sleep(CInt(e.Argument))
 
-            '需要手动检测是否取消任务
+            '需要手动检测是否取消任务（检测 CancellationPending 几乎不花费时间）
             If BGWIns.CancellationPending Then
                 e.Result = "取消了任务"
                 Exit Sub
