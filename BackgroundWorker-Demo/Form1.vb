@@ -51,6 +51,8 @@ Public Class Form1
 
             '需要手动检测是否取消任务（检测 CancellationPending 几乎不花费时间）
             If BGWIns.CancellationPending Then
+                '需要手动设置为取消状态
+                e.Cancel = True
                 e.Result = "取消了任务"
                 Exit Sub
             End If
@@ -71,7 +73,7 @@ Public Class Form1
     ''' <summary>
     ''' 任务完成
     ''' </summary>
-    Private Sub RunWorkerCompleted(ender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs)
+    Private Sub RunWorkerCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs)
         If e.Cancelled Then WorkLabel.Text = e.Result : Exit Sub
         If e.Error IsNot Nothing Then WorkLabel.Text = "任务出错：" & e.Error.HResult & vbCrLf & e.Error.Message : Exit Sub
 
